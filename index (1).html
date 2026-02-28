@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gol Urbano Barcelona – Tu partido empieza aquí</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* =====================================================
+       VARIABLES & RESET
+    ===================================================== */
+    :root {
+      --g:      #1e7f3f;
+      --gd:     #145c2d;
+      --gm:     #27a050;
+      --gn:     #3dfb72;
+      --black:  #080808;
+      --d1:     #0f0f0f;
+      --d2:     #161616;
+      --d3:     #1d1d1d;
+      --white:  #f0f0f0;
+      --gray:   #777;
+      --gl:     #aaa;
+      --fd:    'Bebas Neue', sans-serif;
+      --fc:    'Barlow Condensed', sans-serif;
+      --fb:    'Barlow', sans-serif;
+      --nav:   72px;
+      --r:     8px;
+      --ease:  cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: var(--fb); overflow-x: hidden; line-height: 1.6; }
+    img  { display: block; max-width: 100%; }
+    a    { color: inherit; text-decoration: none; }
+    ul   { list-style: none; }
+
+    /* =====================================================
+       UTILITIES
+    ===================================================== */
+    .container { width: 90%; max-width: 1200px; margin: 0 auto; }
+
+    .section-label {
+      font-family: var(--fc); font-size: .76rem; letter-spacing: .28em;
+      text-transform: uppercase; color: var(--gn);
+      display: flex; align-items: center; gap: 10px; margin-bottom: .6rem;
+    }
+    .section-label::before {
+      content: ''; display: block; width: 26px; height: 2px;
+      background: var(--gn); flex-shrink: 0;
+    }
+    .section-title {
+      font-family: var(--fd);
+      font-size: clamp(2.5rem, 5.5vw, 4.2rem);
+      line-height: .95; margin-bottom: 1.2rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--fc); font-size: .92rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      padding: .8rem 1.9rem; border-radius: var(--r);
+      cursor: pointer; border: none;
+      transition: all .3s var(--ease);
+    }
+    .btn svg { width: 17px; height: 17px; flex-shrink: 0; }
+    .btn-primary { background: var(--g); color: #fff; }
+    .btn-primary:hover { background: var(--gd); transform: translateY(-3px); box-shadow: 0 10px 28px rgba(30,127,63,.42); }
+    .btn-outline  { background: transparent; color: var(--white); border: 1.5px solid rgba(255,255,255,.4); }
+    .btn-outline:hover  { background: rgba(255,255,255,.07); border-color: #fff; transform: translateY(-3px); }
+
+    /* Scroll reveal */
+    .rv  { opacity: 0; transform: translateY(34px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+    .rv.vis { opacity: 1; transform: none; }
+    .d1 { transition-delay: .1s; } .d2 { transition-delay: .2s; }
+    .d3 { transition-delay: .3s; } .d4 { transition-delay: .4s; }
+
+    /* SVG icon helpers */
+    .ico { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* =====================================================
+       HEADER
+    ===================================================== */
+    #hdr {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      height: var(--nav); display: flex; align-items: center;
+      transition: background .4s, box-shadow .4s;
+    }
+    #hdr.sc { background: rgba(8,8,8,.93); backdrop-filter: blur(18px); box-shadow: 0 1px 0 rgba(255,255,255,.06); }
+    #hdr .container { display: flex; align-items: center; justify-content: space-between; }
+
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-mark {
+      width: 36px; height: 36px; background: var(--g); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .logo-mark svg { width: 19px; height: 19px; fill: #fff; }
+    .logo-txt { font-family: var(--fd); font-size: 1.42rem; letter-spacing: .04em; line-height: 1; }
+    .logo-txt span { color: var(--gn); }
+
+    .nav-l { display: flex; align-items: center; gap: 1.8rem; }
+    .nav-l a { font-family: var(--fc); font-size: .88rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; position: relative; padding-bottom: 2px; }
+    .nav-l a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1.5px; background: var(--gn); transition: width .3s var(--ease); }
+    .nav-l a:hover::after { width: 100%; }
+    .nav-l .btn { margin-left: .3rem; padding: .5rem 1.3rem; }
+
+    .ham { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+    .ham span { display: block; width: 23px; height: 1.5px; background: var(--white); transition: all .3s; }
+    .ham.op span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .ham.op span:nth-child(2) { opacity: 0; }
+    .ham.op span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .mob-nav { display: none; position: fixed; top: var(--nav); left: 0; right: 0; background: rgba(8,8,8,.97); backdrop-filter: blur(20px); padding: 2rem; flex-direction: column; gap: 1.2rem; z-index: 999; border-top: 1px solid rgba(255,255,255,.06); }
+    .mob-nav.op { display: flex; }
+    .mob-nav a { font-family: var(--fc); font-size: 1.25rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,.06); }
+
+    /* =====================================================
+       HERO
+    ===================================================== */
+    #inicio { position: relative; min-height: 100vh; display: flex; align-items: center; overflow: hidden; }
+
+    .hero-photo {
+      position: absolute; inset: 0;
+      background: url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1800&q=80&fit=crop') center/cover no-repeat;
+      animation: hzoom 14s ease-in-out infinite alternate;
+    }
+    @keyframes hzoom { from { transform: scale(1.04); } to { transform: scale(1.1); } }
+
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(to right, rgba(8,8,8,.9) 42%, rgba(8,8,8,.22) 100%),
+        linear-gradient(to top, rgba(8,8,8,.65) 0%, transparent 55%);
+      z-index: 1;
+    }
+    .hero-grid-bg {
+      position: absolute; inset: 0; z-index: 1;
+      background-image: linear-gradient(rgba(30,127,63,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(30,127,63,.04) 1px, transparent 1px);
+      background-size: 62px 62px;
+    }
+
+    .hero-content { position: relative; z-index: 2; max-width: 680px; padding-top: var(--nav); }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(30,127,63,.16); border: 1px solid rgba(30,127,63,.42);
+      border-radius: 100px; padding: .32rem 1rem;
+      font-family: var(--fc); font-size: .76rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gn);
+      margin-bottom: 1.4rem;
+      animation: fadeDown .8s var(--ease) both;
+    }
+    .pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gn); animation: pdot 1.6s ease-in-out infinite; }
+    @keyframes pdot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.2;transform:scale(.6)} }
+
+    .hero-title {
+      font-family: var(--fd);
+      font-size: clamp(3.6rem, 10vw, 8rem);
+      line-height: .92; letter-spacing: -.01em; margin-bottom: 1.5rem;
+      animation: fadeUp .9s var(--ease) .15s both;
+    }
+    .hero-title .ac { color: var(--gn); display: block; }
+
+    .hero-sub { font-size: 1.08rem; color: var(--gl); max-width: 450px; margin-bottom: 2.3rem; line-height: 1.7; animation: fadeUp .9s var(--ease) .3s both; }
+    .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; animation: fadeUp .9s var(--ease) .45s both; }
+
+    .hero-stats { display: flex; gap: 0; margin-top: 4rem; animation: fadeUp .9s var(--ease) .6s both; }
+    .hs { padding: 0 2.5rem; }
+    .hs:first-child { padding-left: 0; }
+    .hs + .hs { border-left: 1px solid rgba(255,255,255,.1); }
+    .hs-num { font-family: var(--fd); font-size: 2.4rem; color: var(--gn); line-height: 1; }
+    .hs-lbl { font-size: .76rem; color: var(--gray); text-transform: uppercase; letter-spacing: .1em; margin-top: 2px; }
+
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      font-family: var(--fc); font-size: .7rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gray);
+      z-index: 2; animation: fadeIn 1s ease 1.2s both;
+    }
+    .hs-line { width: 1px; height: 44px; background: linear-gradient(to bottom, var(--g), transparent); animation: sline 2.2s ease-in-out infinite; }
+    @keyframes sline { 0%{transform:scaleY(0);transform-origin:top} 50%{transform:scaleY(1);transform-origin:top} 51%{transform-origin:bottom} 100%{transform:scaleY(0);transform-origin:bottom} }
+
+    @keyframes fadeDown { from{opacity:0;transform:translateY(-18px)} to{opacity:1;transform:none} }
+    @keyframes fadeUp   { from{opacity:0;transform:translateY(26px)}  to{opacity:1;transform:none} }
+    @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+
+    /* =====================================================
+       INSTALACIONES
+    ===================================================== */
+    #instalaciones { padding: 7rem 0; }
+    .campos-g { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; margin-top: 3.5rem; }
+
+    .cc {
+      background: var(--d2); border-radius: 14px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,.06);
+      transition: transform .4s var(--ease), box-shadow .4s var(--ease), border-color .3s;
+    }
+    .cc:hover { transform: translateY(-10px); box-shadow: 0 24px 56px rgba(0,0,0,.55), 0 0 0 1px rgba(30,127,63,.3); border-color: rgba(30,127,63,.35); }
+
+    .cc-img { position: relative; height: 220px; overflow: hidden; }
+    .cc-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .55s var(--ease); }
+    .cc:hover .cc-img img { transform: scale(1.07); }
+    .cc-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(22,22,22,.82) 0%, transparent 55%); }
+
+    .cc-pill {
+      position: absolute; top: 13px; right: 13px; z-index: 2;
+      background: var(--g); color: #fff;
+      font-family: var(--fc); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase;
+      padding: .22rem .75rem; border-radius: 100px;
+    }
+    .cc-pill.gold { background: #b8860b; }
+
+    .cc-body { padding: 1.5rem; }
+    .cc-type { font-family: var(--fc); font-size: .74rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gn); margin-bottom: .3rem; }
+    .cc-name { font-family: var(--fd); font-size: 1.8rem; line-height: 1.05; margin-bottom: .65rem; }
+    .cc-desc { font-size: .86rem; color: var(--gl); margin-bottom: 1.1rem; line-height: 1.65; }
+
+    .cc-tags { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: 1.2rem; }
+    .cc-tags span {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(30,127,63,.09); border: 1px solid rgba(30,127,63,.2);
+      color: rgba(255,255,255,.75); font-family: var(--fc); font-size: .71rem; letter-spacing: .07em;
+      padding: .2rem .65rem; border-radius: 4px;
+    }
+    .cc-tags span svg { width: 11px; height: 11px; flex-shrink: 0; }
+
+    .cc-foot { display: flex; align-items: center; justify-content: space-between; padding-top: 1.1rem; border-top: 1px solid rgba(255,255,255,.07); }
+    .cc-price { font-family: var(--fd); font-size: 1.95rem; color: var(--gn); line-height: 1; }
+    .cc-price small { font-family: var(--fb); font-size: .7rem; color: var(--gray); font-weight: 400; display: block; }
+
+    /* Services */
+    .svc-strip {
+      margin-top: 4.5rem; background: var(--d2);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 14px; padding: 2.4rem;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 1.8rem;
+    }
+    .svc { display: flex; flex-direction: column; align-items: center; text-align: center; gap: .65rem; }
+    .svc-ico {
+      width: 48px; height: 48px;
+      background: rgba(30,127,63,.09); border: 1px solid rgba(30,127,63,.2);
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      transition: all .3s var(--ease);
+    }
+    .svc-ico svg { width: 21px; height: 21px; stroke: var(--gn); }
+    .svc:hover .svc-ico { background: var(--g); border-color: var(--g); transform: scale(1.08); }
+    .svc:hover .svc-ico svg { stroke: #fff; }
+    .svc h4 { font-family: var(--fc); font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gl); line-height: 1.3; }
+
+    /* =====================================================
+       TARIFAS
+    ===================================================== */
+    #tarifas { padding: 7rem 0; background: var(--d1); }
+    .tarifa-g { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; margin-top: 3.5rem; }
+
+    .tc { background: var(--d2); border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,.07); transition: border-color .3s; }
+    .tc:hover { border-color: rgba(30,127,63,.3); }
+    .tc-head { padding: 1.2rem 1.5rem; background: rgba(30,127,63,.07); border-bottom: 1px solid rgba(255,255,255,.06); display: flex; align-items: center; gap: 12px; }
+    .tc-ico { width: 36px; height: 36px; background: rgba(30,127,63,.13); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .tc-ico svg { width: 19px; height: 19px; stroke: var(--gn); }
+    .tc-head h3 { font-family: var(--fd); font-size: 1.45rem; }
+    .tc-head p  { font-size: .78rem; color: var(--gray); }
+
+    table { width: 100%; border-collapse: collapse; }
+    table thead tr { background: rgba(30,127,63,.11); }
+    th { font-family: var(--fc); font-size: .73rem; letter-spacing: .14em; text-transform: uppercase; padding: .82rem 1.3rem; text-align: left; color: var(--gn); }
+    td { padding: .78rem 1.3rem; font-size: .86rem; border-bottom: 1px solid rgba(255,255,255,.042); }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,.024); }
+    .pc { font-family: var(--fc); font-size: 1.04rem; font-weight: 700; color: var(--gn); }
+    .bp { background: rgba(255,80,80,.13); color: #ff7070; font-size: .66rem; font-family: var(--fc); letter-spacing: .1em; text-transform: uppercase; padding: .13rem .45rem; border-radius: 4px; margin-left: 5px; vertical-align: middle; }
+    .bv { background: rgba(30,127,63,.13); color: var(--gn); font-size: .66rem; font-family: var(--fc); letter-spacing: .1em; text-transform: uppercase; padding: .13rem .45rem; border-radius: 4px; margin-left: 5px; vertical-align: middle; }
+
+    /* =====================================================
+       COUNTERS
+    ===================================================== */
+    .cnt-band { background: var(--gd); padding: 3.8rem 0; }
+    .cnt-band .container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+    .cnt { text-align: center; }
+    .cnt-n { font-family: var(--fd); font-size: clamp(2.2rem, 4vw, 3.6rem); color: #fff; line-height: 1; }
+    .cnt-sfx { color: var(--gn); }
+    .cnt-l { font-family: var(--fc); font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.52); margin-top: .35rem; }
+
+    /* =====================================================
+       GALERÍA
+    ===================================================== */
+    #galeria { padding: 7rem 0; }
+    .gal-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: 200px 200px;
+      gap: 10px; margin-top: 3rem;
+    }
+    .gi { position: relative; overflow: hidden; border-radius: 10px; cursor: pointer; }
+    .gi:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+    .gi img { width: 100%; height: 100%; object-fit: cover; transition: transform .55s var(--ease); }
+    .gi:hover img { transform: scale(1.07); }
+    .gi-ov {
+      position: absolute; inset: 0;
+      background: rgba(30,127,63,0);
+      display: flex; align-items: center; justify-content: center;
+      transition: background .3s;
+    }
+    .gi:hover .gi-ov { background: rgba(30,127,63,.3); }
+    .gi-zoom {
+      opacity: 0; transition: opacity .3s;
+      background: rgba(0,0,0,.5); border-radius: 50%;
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .gi-zoom svg { width: 20px; height: 20px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; }
+    .gi:hover .gi-zoom { opacity: 1; }
+
+    /* Lightbox */
+    #lb { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.93); z-index: 3000; align-items: center; justify-content: center; }
+    #lb.op { display: flex; }
+    #lb img { max-width: 90vw; max-height: 84vh; border-radius: 10px; object-fit: contain; }
+    #lb-cls { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; cursor: pointer; transition: transform .3s; }
+    #lb-cls svg { width: 30px; height: 30px; stroke: rgba(255,255,255,.7); fill: none; stroke-width: 2; stroke-linecap: round; }
+    #lb-cls:hover { transform: rotate(90deg); }
+    #lb-cls:hover svg { stroke: var(--gn); }
+    #lb-p, #lb-n {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+      border-radius: 50%; width: 48px; height: 48px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background .25s;
+    }
+    #lb-p { left: 1.5rem; } #lb-n { right: 1.5rem; }
+    #lb-p:hover, #lb-n:hover { background: var(--g); }
+    #lb-p svg, #lb-n svg { width: 22px; height: 22px; stroke: #fff; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    #lb-cap { position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%); font-family: var(--fc); font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.45); white-space: nowrap; }
+
+    /* =====================================================
+       RESERVAS
+    ===================================================== */
+    #reservas { padding: 7rem 0; background: var(--d1); }
+    .res-lay { display: grid; grid-template-columns: 1fr 1.35fr; gap: 4rem; align-items: start; margin-top: 3.5rem; }
+
+    .res-photo { position: relative; border-radius: 14px; overflow: hidden; height: 255px; margin-bottom: 2rem; }
+    .res-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .res-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(30,127,63,.32), transparent); }
+
+    .res-info h3 { font-family: var(--fd); font-size: 1.85rem; margin-bottom: .75rem; }
+    .res-info p  { font-size: .88rem; color: var(--gl); margin-bottom: 1.7rem; }
+
+    .hor-rows { display: flex; flex-direction: column; gap: .55rem; }
+    .hor-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .75rem 1rem; background: rgba(255,255,255,.034);
+      border-radius: var(--r); border-left: 2px solid var(--g); font-size: .86rem;
+    }
+    .hor-row strong { font-family: var(--fc); font-weight: 600; letter-spacing: .05em; display: flex; align-items: center; gap: 7px; }
+    .hor-row strong svg { width: 13px; height: 13px; stroke: var(--gn); fill: none; stroke-width: 2; stroke-linecap: round; }
+
+    .form-card { background: var(--d2); border-radius: 16px; border: 1px solid rgba(255,255,255,.07); padding: 2.3rem; }
+    .form-card h3 { font-family: var(--fd); font-size: 1.55rem; margin-bottom: 1.5rem; }
+
+    .f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .fg { display: flex; flex-direction: column; gap: .3rem; margin-bottom: 1rem; }
+    .fg label {
+      font-family: var(--fc); font-size: .73rem; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--gl);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .fg label svg { width: 12px; height: 12px; stroke: var(--gn); fill: none; stroke-width: 2; stroke-linecap: round; }
+    .fg input, .fg select {
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--r); color: var(--white); font-family: var(--fb); font-size: .88rem;
+      padding: .7rem .9rem; transition: border-color .25s, box-shadow .25s; outline: none; appearance: none;
+    }
+    .fg input:focus, .fg select:focus { border-color: var(--g); box-shadow: 0 0 0 3px rgba(30,127,63,.2); }
+    .fg input.er, .fg select.er { border-color: #e85555; box-shadow: 0 0 0 3px rgba(232,85,85,.15); }
+    .ferr { color: #e87070; font-size: .74rem; display: none; }
+    .ferr.show { display: block; }
+    .fg select option { background: var(--d2); }
+
+    #fsub { width: 100%; padding: .9rem; font-size: .98rem; margin-top: .2rem; justify-content: center; }
+    #fsub svg { stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    #conf { display: none; text-align: center; padding: 1.5rem 1rem; }
+    #conf.show { display: block; }
+    .conf-chk {
+      width: 74px; height: 74px;
+      background: rgba(30,127,63,.11); border: 2px solid var(--g); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.3rem;
+      animation: popIn .5s cubic-bezier(.175,.885,.32,1.275) forwards;
+    }
+    .conf-chk svg { width: 32px; height: 32px; stroke: var(--gn); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    @keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+    #conf h3 { font-family: var(--fd); font-size: 1.85rem; margin-bottom: .55rem; }
+    #conf > p { color: var(--gl); font-size: .88rem; }
+    #conf-d {
+      background: rgba(30,127,63,.07); border: 1px solid rgba(30,127,63,.2);
+      border-radius: 10px; padding: 1.1rem; margin: 1.3rem 0;
+      font-size: .86rem; line-height: 2.1; text-align: left;
+    }
+    #conf-d strong { color: var(--gn); }
+    #btn-r {
+      background: transparent; color: var(--gn); border: 1px solid rgba(30,127,63,.45);
+      font-family: var(--fc); font-size: .82rem; letter-spacing: .1em; text-transform: uppercase;
+      padding: .6rem 1.5rem; border-radius: var(--r); cursor: pointer; transition: all .25s;
+    }
+    #btn-r:hover { background: var(--g); color: #fff; }
+
+    /* =====================================================
+       CONTACTO
+    ===================================================== */
+    #contacto { padding: 7rem 0; }
+    .ctc-lay { display: grid; grid-template-columns: 1fr 1.5fr; gap: 3.5rem; margin-top: 3.5rem; }
+
+    .ctc-cards { display: flex; flex-direction: column; gap: .9rem; }
+    .ccard {
+      display: flex; align-items: flex-start; gap: 1rem;
+      padding: 1.15rem; background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.07); border-radius: 12px;
+      transition: border-color .3s, background .3s;
+    }
+    .ccard:hover { border-color: rgba(30,127,63,.32); background: rgba(30,127,63,.04); }
+    .ccard-ico {
+      width: 40px; height: 40px; flex-shrink: 0;
+      background: rgba(30,127,63,.09); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ccard-ico svg { width: 19px; height: 19px; stroke: var(--gn); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .ccard h4 { font-family: var(--fc); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--gray); margin-bottom: .18rem; }
+    .ccard p, .ccard a { font-size: .9rem; }
+    .ccard a:hover { color: var(--gn); }
+
+    .map-wrap { border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,.07); height: 100%; min-height: 420px; }
+    .map-wrap iframe { width: 100%; height: 100%; min-height: 420px; border: none; filter: invert(1) hue-rotate(180deg) saturate(.82) brightness(.88); }
+
+    /* =====================================================
+       FOOTER
+    ===================================================== */
+    footer { background: #040404; border-top: 1px solid rgba(255,255,255,.05); padding: 4rem 0 2rem; }
+    .ft-top { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 3rem; padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,.055); }
+
+    .ft-brand p { font-size: .84rem; color: var(--gray); margin-top: .95rem; max-width: 225px; line-height: 1.75; }
+    .soc-row { display: flex; gap: .55rem; margin-top: 1.3rem; }
+    .soc-btn {
+      width: 36px; height: 36px; background: rgba(255,255,255,.05); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; transition: all .25s var(--ease);
+    }
+    .soc-btn svg { width: 15px; height: 15px; fill: var(--gl); transition: fill .25s; }
+    .soc-btn:hover { background: var(--g); transform: translateY(-3px); }
+    .soc-btn:hover svg { fill: #fff; }
+
+    .ft-col h5 { font-family: var(--fc); font-size: .76rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gl); margin-bottom: 1rem; }
+    .ft-col li { margin-bottom: .5rem; }
+    .ft-col a { font-size: .86rem; color: var(--gray); transition: color .2s; }
+    .ft-col a:hover { color: var(--white); }
+
+    .ft-bot { display: flex; align-items: center; justify-content: space-between; padding-top: 1.8rem; font-size: .78rem; color: var(--gray); flex-wrap: wrap; gap: .7rem; }
+    .ft-bot a { color: var(--gn); }
+
+    /* =====================================================
+       WHATSAPP
+    ===================================================== */
+    .wa {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
+      width: 52px; height: 52px; background: #25d366; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 22px rgba(37,211,102,.4);
+      transition: transform .3s var(--ease), box-shadow .3s;
+    }
+    .wa svg { width: 27px; height: 27px; fill: #fff; }
+    .wa:hover { transform: scale(1.12); box-shadow: 0 10px 30px rgba(37,211,102,.52); }
+    .wa-tip {
+      position: absolute; right: calc(100% + 12px); top: 50%; transform: translateY(-50%);
+      background: #111; border: 1px solid rgba(255,255,255,.1); color: #fff;
+      font-family: var(--fc); font-size: .74rem; letter-spacing: .06em; white-space: nowrap;
+      padding: .32rem .85rem; border-radius: 100px;
+      opacity: 0; pointer-events: none; transition: opacity .25s;
+    }
+    .wa:hover .wa-tip { opacity: 1; }
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
+    @media (max-width: 1024px) {
+      .campos-g  { grid-template-columns: repeat(2, 1fr); }
+      .tarifa-g  { grid-template-columns: repeat(2, 1fr); }
+      .ft-top    { grid-template-columns: 1fr 1fr; }
+      .cnt-band .container { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      section { padding: 5rem 0 !important; }
+      .nav-l  { display: none; }
+      .ham    { display: flex; }
+      .hero-title { font-size: clamp(3rem, 13vw, 6rem); }
+      .hero-stats { flex-wrap: wrap; }
+      .hs + .hs { border-left: none; padding-left: 0; border-top: 1px solid rgba(255,255,255,.1); padding-top: 1.5rem; margin-top: .5rem; }
+      .campos-g  { grid-template-columns: 1fr; }
+      .tarifa-g  { grid-template-columns: 1fr; }
+      .res-lay   { grid-template-columns: 1fr; }
+      .f-row     { grid-template-columns: 1fr; }
+      .ctc-lay   { grid-template-columns: 1fr; }
+      .ft-top    { grid-template-columns: 1fr 1fr; }
+      .gal-grid  { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
+      .gi:nth-child(1) { grid-column: span 2; height: 220px; }
+    }
+    @media (max-width: 520px) {
+      .ft-top    { grid-template-columns: 1fr; }
+      .hero-ctas { flex-direction: column; }
+      .cnt-band .container { grid-template-columns: repeat(2, 1fr); }
+      .ft-bot    { flex-direction: column; text-align: center; }
+      .gal-grid  { grid-template-columns: 1fr; }
+      .gi:nth-child(1) { grid-column: span 1; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ================================================================
+     HEADER
+================================================================ -->
+<header id="hdr">
+  <div class="container">
+    <a href="#inicio" class="logo">
+      <div class="logo-mark">
+        <!-- soccer ball icon -->
+        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="14" fill="none" stroke="#fff" stroke-width="2"/>
+          <polygon points="16,6 20,12 24,10 24,18 20,20 16,26 12,20 8,18 8,10 12,12" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="logo-txt">Gol <span>Urbano</span></div>
+    </a>
+
+    <nav class="nav-l" id="navl">
+      <a href="#inicio">Inicio</a>
+      <a href="#instalaciones">Instalaciones</a>
+      <a href="#tarifas">Tarifas</a>
+      <a href="#reservas">Reservas</a>
+      <a href="#contacto">Contacto</a>
+      <a href="#reservas" class="btn btn-primary">Reservar</a>
+    </nav>
+    <button class="ham" id="ham" aria-label="Menú"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<nav class="mob-nav" id="mobnav">
+  <a href="#inicio"        onclick="cm()">Inicio</a>
+  <a href="#instalaciones" onclick="cm()">Instalaciones</a>
+  <a href="#tarifas"       onclick="cm()">Tarifas</a>
+  <a href="#reservas"      onclick="cm()">Reservas</a>
+  <a href="#contacto"      onclick="cm()">Contacto</a>
+</nav>
+
+<!-- ================================================================
+     HERO
+================================================================ -->
+<section id="inicio">
+  <div class="hero-photo"></div>
+  <div class="hero-grid-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge"><span class="pulse-dot"></span>Barcelona · Carrer de la Indústria 45</div>
+      <h1 class="hero-title">Tu partido<span class="ac">empieza aquí</span></h1>
+      <p class="hero-sub">3 campos de fútbol premium en el corazón de Barcelona. Indoor, outdoor y césped natural. Reserva online en segundos.</p>
+      <div class="hero-ctas">
+        <a href="#reservas" class="btn btn-primary">
+          <svg class="ico" viewBox="0 0 24 24" stroke="#fff" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Reservar ahora
+        </a>
+        <a href="#instalaciones" class="btn btn-outline">
+          <svg class="ico" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Ver instalaciones
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="hs"><div class="hs-num counter" data-target="4200">0</div><div class="hs-lbl">Clientes</div></div>
+        <div class="hs"><div class="hs-num counter" data-target="3">0</div><div class="hs-lbl">Campos</div></div>
+        <div class="hs"><div class="hs-num counter" data-target="98">0</div><div class="hs-lbl">% Satisfacción</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll"><div class="hs-line"></div><span>Scroll</span></div>
+</section>
+
+<!-- ================================================================
+     INSTALACIONES
+================================================================ -->
+<section id="instalaciones">
+  <div class="container">
+    <span class="section-label rv">Nuestras instalaciones</span>
+    <h2 class="section-title rv">Los mejores campos<br>de Barcelona</h2>
+
+    <div class="campos-g">
+
+      <!-- F5 Indoor -->
+      <div class="cc rv d1">
+        <div class="cc-img">
+          <img src="https://www.fut5.es/wp-content/uploads/2023/04/FUT5-VALENCIA-CAMPO-4_V2.jpeg" alt="Campo Fútbol 5 Indoor" loading="lazy"/>
+          <span class="cc-pill">Indoor</span>
+        </div>
+        <div class="cc-body">
+          <div class="cc-type">Fútbol 5</div>
+          <h3 class="cc-name">Campo Indoor Premium</h3>
+          <p class="cc-desc">Césped artificial de última generación bajo techo. Temperatura controlada todo el año con iluminación LED profesional de alta intensidad.</p>
+          <div class="cc-tags">
+            <span><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>LED Pro</span>
+            <span><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>Climatizado</span>
+            <span><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Césped Artif.</span>
+            <span><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>5 jugadores</span>
+          </div>
+          <div class="cc-foot">
+            <div class="cc-price">30€<small>por hora</small></div>
+            <a href="#reservas" class="btn btn-primary">Reservar</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- F7 Outdoor -->
+      <div class="cc rv d2">
+        <div class="cc-img">
+          <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=700&q=80&fit=crop" alt="Campo Fútbol 7 Outdoor" loading="lazy"/>
+          <span class="cc-pill">Outdoor</span>
+        </div>
+        <div class="cc-body">
+          <div class="cc-type">Fútbol 7</div>
+          <h3 class="cc-name">Campo Exterior F7</h3>
+          <p class="cc-desc">Césped artificial de alta resistencia con sistema de drenaje superior. Ideal para ligas y torneos semanales con iluminación nocturna.</p>
+          <div class="cc-tags">
+            <span><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Césped Artif.</span>
+            <span><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Nocturno</span>
+            <span><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>7 jugadores</span>
+            <span><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M4 22h16M4 22V11l8-9 8 9v11"/><path d="M10 22v-5h4v5"/></svg>Vestuarios</span>
+          </div>
+          <div class="cc-foot">
+            <div class="cc-price">50€<small>por hora</small></div>
+            <a href="#reservas" class="btn btn-primary">Reservar</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- F11 Natural -->
+      <div class="cc rv d3">
+        <div class="cc-img">
+          <img src="https://images.unsplash.com/photo-1459865264687-595d652de67e?w=700&q=80&fit=crop" alt="Campo Fútbol 11 Natural" loading="lazy"/>
+          <span class="cc-pill gold">Premium</span>
+        </div>
+        <div class="cc-body">
+          <div class="cc-type">Fútbol 11</div>
+          <h3 class="cc-name">Campo Natural F11</h3>
+          <p class="cc-desc">Césped natural tratado con tecnología Sports Turf Pro. Reglamentario FIFA. La experiencia más auténtica y profesional de Barcelona.</p>
+          <div class="cc-tags">
+            <span><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85"/></svg>Natural</span>
+            <span><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Reglamentario</span>
+            <span><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>FIFA Ready</span>
+            <span><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>11 jugadores</span>
+          </div>
+          <div class="cc-foot">
+            <div class="cc-price">90€<small>por hora</small></div>
+            <a href="#reservas" class="btn btn-primary">Reservar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Services strip -->
+    <div class="svc-strip rv">
+      <div class="svc">
+        <div class="svc-ico">
+          <svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="1.7"><path d="M4 22h16M4 22V11l8-9 8 9v11M10 22v-5h4v5"/></svg>
+        </div>
+        <h4>Vestuarios con duchas</h4>
+      </div>
+      <div class="svc">
+        <div class="svc-ico">
+          <svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <h4>Alquiler petos y balones</h4>
+      </div>
+      <div class="svc">
+        <div class="svc-ico">
+          <svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="1.7"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        </div>
+        <h4>Bar y zona chill out</h4>
+      </div>
+      <div class="svc">
+        <div class="svc-ico">
+          <svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="1.7"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h3l4 4v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <h4>Parking gratuito</h4>
+      </div>
+      <div class="svc">
+        <div class="svc-ico">
+          <svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="1.7"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        </div>
+        <h4>Cámaras de seguridad</h4>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     TARIFAS
+================================================================ -->
+<section id="tarifas">
+  <div class="container">
+    <span class="section-label rv">Precios</span>
+    <h2 class="section-title rv">Tarifas claras<br>sin sorpresas</h2>
+
+    <div class="tarifa-g">
+
+      <div class="tc rv d1">
+        <div class="tc-head">
+          <div class="tc-ico"><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
+          <div><h3>Fútbol 5 Indoor</h3><p>Instalación cubierta premium</p></div>
+        </div>
+        <table>
+          <thead><tr><th>Franja</th><th>Horario</th><th>Precio</th></tr></thead>
+          <tbody>
+            <tr><td>Valle <span class="bv">Ahorro</span></td><td>Lun–Vie 9–17h</td><td class="pc">25€/h</td></tr>
+            <tr><td>Punta <span class="bp">Demanda</span></td><td>Lun–Vie 17–23h</td><td class="pc">30€/h</td></tr>
+            <tr><td>Valle <span class="bv">Ahorro</span></td><td>Sáb–Dom 8–14h</td><td class="pc">27€/h</td></tr>
+            <tr><td>Punta <span class="bp">Demanda</span></td><td>Sáb–Dom 14–22h</td><td class="pc">30€/h</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tc rv d2">
+        <div class="tc-head">
+          <div class="tc-ico"><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div><h3>Fútbol 7 Outdoor</h3><p>Césped artificial exterior</p></div>
+        </div>
+        <table>
+          <thead><tr><th>Franja</th><th>Horario</th><th>Precio</th></tr></thead>
+          <tbody>
+            <tr><td>Valle <span class="bv">Ahorro</span></td><td>Lun–Vie 9–17h</td><td class="pc">40€/h</td></tr>
+            <tr><td>Punta <span class="bp">Demanda</span></td><td>Lun–Vie 17–23h</td><td class="pc">50€/h</td></tr>
+            <tr><td>Valle <span class="bv">Ahorro</span></td><td>Sáb–Dom 8–14h</td><td class="pc">45€/h</td></tr>
+            <tr><td>Punta <span class="bp">Demanda</span></td><td>Sáb–Dom 14–22h</td><td class="pc">50€/h</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tc rv d3">
+        <div class="tc-head">
+          <div class="tc-ico"><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+          <div><h3>Fútbol 11 Natural</h3><p>Césped natural reglamentario</p></div>
+        </div>
+        <table>
+          <thead><tr><th>Franja</th><th>Horario</th><th>Precio</th></tr></thead>
+          <tbody>
+            <tr><td>Valle <span class="bv">Ahorro</span></td><td>Lun–Vie 9–17h</td><td class="pc">70€/h</td></tr>
+            <tr><td>Punta <span class="bp">Demanda</span></td><td>Lun–Vie 17–23h</td><td class="pc">90€/h</td></tr>
+            <tr><td>Valle <span class="bv">Ahorro</span></td><td>Sáb–Dom 8–14h</td><td class="pc">80€/h</td></tr>
+            <tr><td>Punta <span class="bp">Demanda</span></td><td>Sáb–Dom 14–22h</td><td class="pc">90€/h</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     COUNTERS
+================================================================ -->
+<div class="cnt-band" id="cnt-band">
+  <div class="container">
+    <div class="cnt"><div class="cnt-n counter" data-target="4200">0</div><div class="cnt-sfx">+</div><div class="cnt-l">Clientes satisfechos</div></div>
+    <div class="cnt"><div class="cnt-n counter" data-target="15000">0</div><div class="cnt-sfx">+</div><div class="cnt-l">Partidos jugados</div></div>
+    <div class="cnt"><div class="cnt-n counter" data-target="8">0</div><div class="cnt-sfx"> años</div><div class="cnt-l">En el mercado</div></div>
+    <div class="cnt"><div class="cnt-n counter" data-target="3">0</div><div class="cnt-sfx"></div><div class="cnt-l">Campos disponibles</div></div>
+  </div>
+</div>
+
+<!-- ================================================================
+     GALERÍA
+================================================================ -->
+<section id="galeria">
+  <div class="container">
+    <span class="section-label rv">Galería</span>
+    <h2 class="section-title rv">Vive la experiencia<br>Gol Urbano</h2>
+
+    <div class="gal-grid">
+      <div class="gi rv" onclick="olb(0)">
+        <img src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=900&q=80&fit=crop" alt="Campo aéreo" loading="lazy"/>
+        <div class="gi-ov"><div class="gi-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div></div>
+      </div>
+      <div class="gi rv d1" onclick="olb(1)">
+        <img src="https://png.pngtree.com/thumb_back/fh260/background/20241210/pngtree-soccer-field-and-spotlight-background-in-the-stadium-image_16742359.jpg" alt="Partido nocturno" loading="lazy"/>
+        <div class="gi-ov"><div class="gi-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div></div>
+      </div>
+      <div class="gi rv d2" onclick="olb(2)">
+        <img src="https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?w=600&q=80&fit=crop" alt="Jugadores en acción" loading="lazy"/>
+        <div class="gi-ov"><div class="gi-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div></div>
+      </div>
+      <div class="gi rv d1" onclick="olb(3)">
+        <img src="https://images.unsplash.com/photo-1624880357913-a8539238245b?w=600&q=80&fit=crop" alt="Balón detalle" loading="lazy"/>
+        <div class="gi-ov"><div class="gi-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div></div>
+      </div>
+      <div class="gi rv d2" onclick="olb(4)">
+        <img src="https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=600&q=80&fit=crop" alt="Celebración gol" loading="lazy"/>
+        <div class="gi-ov"><div class="gi-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div id="lb">
+  <button id="lb-cls" aria-label="Cerrar">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <button id="lb-p" aria-label="Anterior">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <img id="lb-img" src="" alt="Imagen ampliada"/>
+  <button id="lb-n" aria-label="Siguiente">
+    <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+  <div id="lb-cap"></div>
+</div>
+
+<!-- ================================================================
+     RESERVAS
+================================================================ -->
+<section id="reservas">
+  <div class="container">
+    <span class="section-label rv">Reservas online</span>
+    <h2 class="section-title rv">Reserva tu campo<br>ahora mismo</h2>
+
+    <div class="res-lay">
+      <div class="res-info rv">
+        <div class="res-photo">
+          <img src="https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=700&q=80&fit=crop" alt="Partido de fútbol"/>
+        </div>
+        <h3>¿Cómo reservar?</h3>
+        <p>Completa el formulario con tus datos, elige el campo y la franja horaria. Confirmación instantánea.</p>
+        <div class="hor-rows">
+          <div class="hor-row">
+            <strong>
+              <svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Lunes a Viernes
+            </strong>
+            <span>9:00 – 23:00</span>
+          </div>
+          <div class="hor-row">
+            <strong>
+              <svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Sábados y Domingos
+            </strong>
+            <span>8:00 – 22:00</span>
+          </div>
+          <div class="hor-row">
+            <strong>
+              <svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.23h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.84a16 16 0 0 0 6 6l.96-.96a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Teléfono
+            </strong>
+            <span>+34 931 456 789</span>
+          </div>
+          <div class="hor-row">
+            <strong>
+              <svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Email
+            </strong>
+            <span style="font-size:.8rem">reservas@golurbanobarcelona.com</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card rv d2">
+        <h3>Nueva reserva</h3>
+        <form id="rform" novalidate>
+          <div class="f-row">
+            <div class="fg">
+              <label for="nombre">
+                <svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Nombre *
+              </label>
+              <input type="text" id="nombre" placeholder="Marc García" autocomplete="name"/>
+              <span class="ferr" id="e-n">Introduce tu nombre.</span>
+            </div>
+            <div class="fg">
+              <label for="email">
+                <svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Email *
+              </label>
+              <input type="email" id="email" placeholder="marc@email.com" autocomplete="email"/>
+              <span class="ferr" id="e-em">Email no válido.</span>
+            </div>
+          </div>
+          <div class="fg">
+            <label for="tel">
+              <svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.23h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.84a16 16 0 0 0 6 6l.96-.96a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Teléfono *
+            </label>
+            <input type="tel" id="tel" placeholder="+34 600 000 000" autocomplete="tel"/>
+            <span class="ferr" id="e-tel">Teléfono no válido.</span>
+          </div>
+          <div class="fg">
+            <label for="campo">
+              <svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              Tipo de campo *
+            </label>
+            <select id="campo">
+              <option value="">Selecciona un campo…</option>
+              <option value="Fútbol 5 Indoor – desde 25€/h">Fútbol 5 Indoor – desde 25€/h</option>
+              <option value="Fútbol 7 Outdoor – desde 40€/h">Fútbol 7 Outdoor – desde 40€/h</option>
+              <option value="Fútbol 11 Natural – desde 70€/h">Fútbol 11 Natural – desde 70€/h</option>
+            </select>
+            <span class="ferr" id="e-c">Selecciona un campo.</span>
+          </div>
+          <div class="f-row">
+            <div class="fg">
+              <label for="fecha">
+                <svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Fecha *
+              </label>
+              <input type="date" id="fecha"/>
+              <span class="ferr" id="e-f">Selecciona una fecha.</span>
+            </div>
+            <div class="fg">
+              <label for="hora">
+                <svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Hora *
+              </label>
+              <select id="hora">
+                <option value="">Selecciona hora…</option>
+                <option>09:00</option><option>10:00</option><option>11:00</option>
+                <option>12:00</option><option>13:00</option><option>14:00</option>
+                <option>15:00</option><option>16:00</option><option>17:00</option>
+                <option>18:00</option><option>19:00</option><option>20:00</option>
+                <option>21:00</option><option>22:00</option>
+              </select>
+              <span class="ferr" id="e-h">Selecciona una hora.</span>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" id="fsub">
+            <svg class="ico" viewBox="0 0 24 24" stroke="#fff" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+            Confirmar reserva
+          </button>
+        </form>
+
+        <div id="conf">
+          <div class="conf-chk">
+            <svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h3>¡Reserva confirmada!</h3>
+          <p>Tu reserva ha sido registrada con éxito.</p>
+          <div id="conf-d"></div>
+          <p style="color:var(--gray);font-size:.8rem;margin-bottom:1rem">Recibirás un email de confirmación en breve.</p>
+          <button id="btn-r" onclick="resetF()">← Hacer otra reserva</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     CONTACTO
+================================================================ -->
+<section id="contacto">
+  <div class="container">
+    <span class="section-label rv">Contacto</span>
+    <h2 class="section-title rv">Encuéntranos<br>en Barcelona</h2>
+
+    <div class="ctc-lay">
+      <div class="ctc-cards">
+        <div class="ccard rv">
+          <div class="ccard-ico"><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="1.7"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div><h4>Dirección</h4><p>Carrer de la Indústria 45<br>08025 Barcelona, España</p></div>
+        </div>
+        <div class="ccard rv d1">
+          <div class="ccard-ico"><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="1.7"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.23h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.84a16 16 0 0 0 6 6l.96-.96a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+          <div><h4>Teléfono</h4><a href="tel:+34931456789">+34 931 456 789</a></div>
+        </div>
+        <div class="ccard rv d2">
+          <div class="ccard-ico"><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="1.7"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <div><h4>Email</h4><a href="mailto:reservas@golurbanobarcelona.com">reservas@golurbanobarcelona.com</a></div>
+        </div>
+        <div class="ccard rv d3">
+          <div class="ccard-ico"><svg class="ico" viewBox="0 0 24 24" stroke="var(--gn)" stroke-width="1.7"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div><h4>Horario</h4><p>Lun–Vie: 9:00 – 23:00<br>Sáb–Dom: 8:00 – 22:00</p></div>
+        </div>
+      </div>
+
+      <div class="map-wrap rv d2">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2993.011820743936!2d2.1592279!3d41.4021449!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12a4a2f1a6e98b19%3A0x2e6e2c81d9c89a7b!2sCarrer%20de%20la%20Ind%C3%BAstria%2C%2045%2C%2008025%20Barcelona!5e0!3m2!1ses!2ses!4v1700000000000!5m2!1ses!2ses" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Ubicación Gol Urbano Barcelona"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     FOOTER
+================================================================ -->
+<footer>
+  <div class="container">
+    <div class="ft-top">
+      <div class="ft-brand">
+        <div class="logo">
+          <div class="logo-mark">
+            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="14" fill="none" stroke="#fff" stroke-width="2"/><polygon points="16,6 20,12 24,10 24,18 20,20 16,26 12,20 8,18 8,10 12,12" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="logo-txt">Gol <span>Urbano</span></div>
+        </div>
+        <p>El complejo de fútbol más moderno de Barcelona. Tres campos premium para tu partido perfecto.</p>
+        <div class="soc-row">
+          <a href="#" class="soc-btn" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          <a href="#" class="soc-btn" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          <a href="#" class="soc-btn" aria-label="Twitter"><svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+          <a href="#" class="soc-btn" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.97C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg></a>
+          <a href="#" class="soc-btn" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg></a>
+        </div>
+      </div>
+
+      <div class="ft-col">
+        <h5>Instalaciones</h5>
+        <ul>
+          <li><a href="#instalaciones">Fútbol 5 Indoor</a></li>
+          <li><a href="#instalaciones">Fútbol 7 Outdoor</a></li>
+          <li><a href="#instalaciones">Fútbol 11 Natural</a></li>
+          <li><a href="#instalaciones">Servicios</a></li>
+        </ul>
+      </div>
+      <div class="ft-col">
+        <h5>Información</h5>
+        <ul>
+          <li><a href="#tarifas">Tarifas</a></li>
+          <li><a href="#">Ligas y torneos</a></li>
+          <li><a href="#">Normativa</a></li>
+          <li><a href="#">Cancelaciones</a></li>
+        </ul>
+      </div>
+      <div class="ft-col">
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="#">Privacidad</a></li>
+          <li><a href="#">Aviso legal</a></li>
+          <li><a href="#">Cookies</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ft-bot">
+      <p>© 2025 Gol Urbano Barcelona S.L. · Todos los derechos reservados.</p>
+      <p>Diseñado con dedicación en Barcelona · <a href="mailto:reservas@golurbanobarcelona.com">reservas@golurbanobarcelona.com</a></p>
+    </div>
+  </div>
+</footer>
+
+<!-- WhatsApp float -->
+<a class="wa" href="https://wa.me/34931456789?text=Hola%2C%20quiero%20información%20sobre%20reservas" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+  <span class="wa-tip">Reservar por WhatsApp</span>
+</a>
+
+<!-- ================================================================
+     JAVASCRIPT
+================================================================ -->
+<script>
+  /* ── NAV ─────────────────────────────────────────────── */
+  const hdr = document.getElementById('hdr');
+  const ham = document.getElementById('ham');
+  const mob = document.getElementById('mobnav');
+
+  window.addEventListener('scroll', () => hdr.classList.toggle('sc', scrollY > 40), { passive: true });
+  ham.addEventListener('click', () => { ham.classList.toggle('op'); mob.classList.toggle('op'); });
+  function cm() { ham.classList.remove('op'); mob.classList.remove('op'); }
+  window.addEventListener('resize', () => { if (innerWidth > 768) cm(); });
+
+  /* ── SCROLL REVEAL ───────────────────────────────────── */
+  const rvIO = new IntersectionObserver(
+    es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); }),
+    { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+  );
+  document.querySelectorAll('.rv').forEach(el => rvIO.observe(el));
+
+  /* ── COUNTERS ────────────────────────────────────────── */
+  const cntIO = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if (!e.isIntersecting || e.target.dataset.done) return;
+      e.target.dataset.done = 1;
+      const tgt = +e.target.dataset.target, dur = 1800, t0 = performance.now();
+      (function tick(now) {
+        const p = Math.min((now - t0) / dur, 1);
+        e.target.textContent = Math.round((1 - Math.pow(1 - p, 3)) * tgt).toLocaleString('es-ES');
+        if (p < 1) requestAnimationFrame(tick);
+      })(performance.now());
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.counter').forEach(el => cntIO.observe(el));
+
+  /* ── LIGHTBOX ────────────────────────────────────────── */
+  const IMGS = [
+    { s: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=1400&q=85&fit=crop', c: 'Vista aérea del campo principal' },
+    { s: 'https://images.unsplash.com/photo-1508098682722-e99c643e7f76?w=1400&q=85&fit=crop', c: 'Partido nocturno profesional' },
+    { s: 'https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?w=1400&q=85&fit=crop', c: 'Jugadores en plena acción' },
+    { s: 'https://images.unsplash.com/photo-1624880357913-a8539238245b?w=1400&q=85&fit=crop', c: 'Balón oficial' },
+    { s: 'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=1400&q=85&fit=crop', c: 'Celebración tras el gol' },
+  ];
+  let lbi = 0;
+  const lb    = document.getElementById('lb');
+  const lbImg = document.getElementById('lb-img');
+  const lbCap = document.getElementById('lb-cap');
+
+  function olb(i) {
+    lbi = i; lbImg.src = IMGS[i].s; lbCap.textContent = IMGS[i].c;
+    lb.classList.add('op'); document.body.style.overflow = 'hidden';
+  }
+  function clb() { lb.classList.remove('op'); document.body.style.overflow = ''; }
+  function lbNav(d) {
+    lbi = (lbi + d + IMGS.length) % IMGS.length;
+    lbImg.src = IMGS[lbi].s; lbCap.textContent = IMGS[lbi].c;
+  }
+  document.getElementById('lb-cls').onclick = clb;
+  document.getElementById('lb-p').onclick   = () => lbNav(-1);
+  document.getElementById('lb-n').onclick   = () => lbNav(1);
+  lb.addEventListener('click', e => { if (e.target === lb) clb(); });
+  document.addEventListener('keydown', e => {
+    if (!lb.classList.contains('op')) return;
+    if (e.key === 'Escape')     clb();
+    if (e.key === 'ArrowLeft')  lbNav(-1);
+    if (e.key === 'ArrowRight') lbNav(1);
+  });
+
+  /* ── FORM ────────────────────────────────────────────── */
+  document.getElementById('fecha').min = new Date().toISOString().split('T')[0];
+
+  function fe(id, eid, bad) {
+    document.getElementById(id).classList.toggle('er', bad);
+    document.getElementById(eid).classList.toggle('show', bad);
+  }
+
+  function validate() {
+    const n  = document.getElementById('nombre').value.trim();
+    const em = document.getElementById('email').value.trim();
+    const t  = document.getElementById('tel').value.trim();
+    const c  = document.getElementById('campo').value;
+    const f  = document.getElementById('fecha').value;
+    const h  = document.getElementById('hora').value;
+    let ok = true;
+    if (n.length < 2)              { fe('nombre','e-n',true);  ok=false; } else fe('nombre','e-n',false);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { fe('email','e-em',true);  ok=false; } else fe('email','e-em',false);
+    if (!/^[\+]?[\d\s\-]{7,15}$/.test(t))       { fe('tel','e-tel',true); ok=false; } else fe('tel','e-tel',false);
+    if (!c) { fe('campo','e-c',true);  ok=false; } else fe('campo','e-c',false);
+    if (!f) { fe('fecha','e-f',true);  ok=false; } else fe('fecha','e-f',false);
+    if (!h) { fe('hora','e-h',true);   ok=false; } else fe('hora','e-h',false);
+    return ok ? { n, em, t, c, f, h } : null;
+  }
+
+  document.getElementById('rform').addEventListener('submit', ev => {
+    ev.preventDefault();
+    const d = validate(); if (!d) return;
+    const btn = document.getElementById('fsub');
+    btn.disabled = true; btn.textContent = 'Procesando…';
+
+    setTimeout(() => {
+      const code = 'GUB-' + Math.random().toString(36).substr(2,5).toUpperCase() + '-' + Date.now().toString().slice(-4);
+      const [y,m,dd] = d.f.split('-');
+      document.getElementById('conf-d').innerHTML =
+        `<p>Código: <strong>${code}</strong></p>
+         <p>Nombre: <strong>${d.n}</strong></p>
+         <p>Email: <strong>${d.em}</strong></p>
+         <p>Teléfono: <strong>${d.t}</strong></p>
+         <p>Campo: <strong>${d.c}</strong></p>
+         <p>Fecha: <strong>${dd}/${m}/${y}</strong></p>
+         <p>Hora: <strong>${d.h}h</strong></p>`;
+      document.getElementById('rform').style.display = 'none';
+      document.getElementById('conf').classList.add('show');
+      btn.disabled = false;
+      btn.innerHTML = '<svg class="ico" viewBox="0 0 24 24" stroke="#fff" stroke-width="2" style="width:17px;height:17px"><path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg> Confirmar reserva';
+    }, 1300);
+  });
+
+  function resetF() {
+    document.getElementById('rform').reset();
+    document.getElementById('rform').style.display = 'block';
+    document.getElementById('conf').classList.remove('show');
+    ['nombre','email','tel','campo','fecha','hora'].forEach(id => document.getElementById(id).classList.remove('er'));
+    document.querySelectorAll('.ferr').forEach(e => e.classList.remove('show'));
+  }
+  ['nombre','email','tel','campo','fecha','hora'].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('input',  () => el.classList.remove('er'));
+    el.addEventListener('change', () => el.classList.remove('er'));
+  });
+</script>
+</body>
+</html>
